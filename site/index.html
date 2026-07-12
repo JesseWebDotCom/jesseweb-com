@@ -145,18 +145,35 @@
     .machine .minitv{transform:scale(.85);transform-origin:bottom center}
     .machine .minicab{transform:scale(.9);transform-origin:bottom center}
   }
+  @media (orientation:landscape) and (max-height:520px){
+    body{padding:10px 12px 14px}
+    .stage{gap:10px}
+    header h1{font-size:20px;letter-spacing:.4em;padding-left:.4em}
+    header .sub{margin-top:4px;font-size:9px}
+    header .pick{margin-top:8px;font-size:9px;padding:5px 12px}
+    .choices{gap:34px;flex-wrap:nowrap}
+    .choice{padding:4px 10px 8px}
+    .machine{height:130px}
+    .machine .minitv{transform:scale(.5);transform-origin:bottom center}
+    .machine .minicab{transform:scale(.5);transform-origin:bottom center}
+    .choice .label{margin-top:6px;font-size:11px}
+    .choice .desc{display:none}
+    .choice .cta{margin-top:6px;font-size:9px;padding:6px 12px 6px calc(12px + .26em)}
+    footer{font-size:9px;gap:10px}
+    .readerdoc{display:none}
+  }
   @media (prefers-reduced-motion:reduce){
     .choice,.choice .cta{transition:none}
     .choice:hover .minicab .cscr u{animation:none}
   }
-  .readerdoc{max-width:640px;margin:90px auto 30px;padding:0 18px;
-    font-family:Georgia,"Times New Roman",serif;font-size:13px;line-height:1.75;color:rgba(190,183,165,.5)}
-  .readerdoc h1{font-size:16px;letter-spacing:.05em;margin-bottom:10px;color:rgba(200,192,172,.65);font-weight:600}
-  .readerdoc h2{font-size:11.5px;margin:18px 0 6px;letter-spacing:.14em;text-transform:uppercase;color:rgba(195,188,168,.6)}
-  .readerdoc p{margin:8px 0}
-  .readerdoc ul{padding-left:18px;margin:6px 0}
-  .readerdoc li{margin:3px 0}
-  .readerdoc a{color:rgba(205,196,172,.75)}
+  .readerdoc{max-width:640px;margin:40px auto 6px;padding:0 18px;
+    font-size:5px;line-height:1.15;color:transparent;user-select:none;-webkit-user-select:none;pointer-events:none}
+  .readerdoc h1{font-size:5px;margin:2px 0;color:transparent}
+  .readerdoc h2{font-size:5px;margin:2px 0;color:transparent}
+  .readerdoc p{margin:1px 0}
+  .readerdoc ul{padding-left:8px;margin:1px 0}
+  .readerdoc li{margin:1px 0}
+  .readerdoc a{color:transparent}
 </style>
 </head>
 <body>
@@ -166,7 +183,7 @@
 <div class="stage">
   <header>
     <h1>JESSEWEB</h1>
-    <div class="sub">JESSE M. TORRES &middot; SENIOR CORE PLATFORM ENGINEER</div>
+    <div class="sub">JESSE M. TORRES &middot; ENTERPRISE AI &amp; PLATFORM ENGINEER</div>
     <div class="pick">ONE RESUME &middot; TWO MACHINES &middot; PICK ONE</div>
   </header>
 
@@ -212,7 +229,7 @@
 </div>
 
 <article class="readerdoc">
-  <h1>Jesse M. Torres, Senior Core Platform Engineer</h1>
+  <h1>Jesse M. Torres, Enterprise AI &amp; Platform Engineer</h1>
   <p><strong>You are reading the text version of jesseweb.com.</strong> The real site is interactive: a working 1950s television that broadcasts my career across 22 channels of vintage footage, and a playable side-scrolling arcade game through six eras of my life. Exit reader view to choose a machine and experience it.</p>
   <h2>About</h2>
   <p>More than 30 years in enterprise technology across military, government, financial, and corporate environments, including work requiring a Top Secret clearance. Current focus: enterprise AI. Evaluating, integrating, governing, and hardening platforms such as Claude, Claude Code, ChatGPT Enterprise, MCP integrations, and agent architectures for production use in security-conscious organizations.</p>
@@ -233,7 +250,7 @@
   </ul>
   <h2>Experience</h2>
   <ul>
-    <li>Bridgewater Associates, Senior Core Platform Engineer, April 2001 to present. Platform engineering, DevOps, automation architecture, and enterprise AI enablement.</li>
+    <li>Bridgewater Associates, Enterprise AI &amp; Platform Engineer, April 2001 to present. Platform engineering, DevOps, automation architecture, and enterprise AI enablement.</li>
     <li>McGowan Consulting Group, Senior Systems Engineer, 1999 to 2001. Sikorsky Comanche program: security, imaging, and automation at scale.</li>
     <li>PricewaterhouseCoopers (Stamford, CT), Technical Specialist, 1998 to 1999. Multi-site support and executive support through the 1998 merger.</li>
     <li>Air National Guard, Senior Airman, August 1992 to August 1998. Computer maintenance and cryptography, with a Top Secret clearance.</li>

@@ -26,6 +26,7 @@
   .homelink{position:fixed;top:13px;left:16px;z-index:80;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
     color:#5a4f6b;text-decoration:none;opacity:.85;transition:color .2s,opacity .2s;padding:6px 8px}
   .homelink:hover{color:#c8b4e8;opacity:1}
+  body.touch .homelink{display:none}
 
   .setrow{display:flex;align-items:flex-start;justify-content:center;gap:26px;flex-wrap:wrap}
 
@@ -144,7 +145,6 @@
 
   /* on-screen gamepad (touch devices) */
   .tctl{position:absolute;bottom:10px;z-index:7;display:none;user-select:none;-webkit-user-select:none;touch-action:none}
-  body.touch .tctl{display:grid}
   .tpad{left:10px;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px;gap:4px;
     grid-template-areas:". up ." "lf dn rt"}
   .tpad b:nth-child(1){grid-area:up}
@@ -167,9 +167,10 @@
   /* landscape phones: fullscreen arcade with overlaid controls */
   @media (orientation:landscape) and (max-height:520px) and (pointer:coarse){
     body{padding:0;overflow:hidden}
-    .homelink{top:6px;left:8px;font-size:10px;padding:6px 10px;z-index:9;opacity:1;
-      background:rgba(8,10,18,.55);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#dfe3ea}
-    .homelink:hover{color:#fff}
+    body.touch .tctl{display:grid}
+    .padbar{display:none!important}
+    .gamelinks{display:none!important}
+    .homelink{display:none}
     .bezel{position:fixed;inset:0;padding:0;border:none;border-radius:0;background:#000;box-shadow:none;z-index:1}
     .screenbox{position:absolute;inset:0;border-radius:0;display:flex;align-items:center;justify-content:center;
       background:#000;box-shadow:none}
@@ -192,9 +193,8 @@
     .overlayscr .start{font-size:10px;padding:7px 12px 7px calc(12px + .3em);margin-top:0}
     .diffrow{margin-top:0}
     .dbtn{font-size:8px;padding:4px 7px}
-    #tU,#tD{display:none}
-    .tpad{grid-template-columns:54px 54px;grid-template-rows:46px;grid-template-areas:"lf rt";left:10px;bottom:12px;gap:8px}
-    .tctl b{height:46px;font-size:15px;border-radius:12px}
+    .tpad{grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px;left:10px;bottom:12px;gap:5px}
+    .tctl b{height:44px;font-size:14px;border-radius:11px}
     .tbtns{grid-template-columns:66px 66px;gap:10px;right:10px;bottom:12px}
     .tbtns b{height:46px;border-radius:12px}
     .tbtns #tA,.tbtns #tB{font-size:0}
@@ -202,16 +202,34 @@
     .tbtns #tB::after{content:"FIRE";font-size:10.5px;letter-spacing:.08em}
   }
 
-  /* legacy bar, kept for script hooks but never shown */
-  .padbar{display:none!important;margin-top:12px;gap:10px}
-  .padbar button{
+  /* portrait touch: controller clusters below the screen */
+  .padbar{display:none;margin-top:14px;gap:10px}
+  body.touch .padbar{display:flex;justify-content:space-between;align-items:center;padding:0 6px}
+  .pdpad{display:grid;grid-template-columns:48px 48px 48px;grid-template-rows:44px 44px;gap:5px;
+    grid-template-areas:". up ." "lf dn rt"}
+  #padU{grid-area:up}
+  #padL{grid-area:lf}
+  #padD{grid-area:dn}
+  #padR{grid-area:rt}
+  .pdpad button{flex:none;padding:0;height:44px}
+  .pbtns{display:flex;gap:10px;align-items:center}
+  .pbtns button{flex:none;width:66px;height:54px;border-radius:16px;padding:0}
+  #padX{flex:none;width:56px;padding:10px 0}
+  .padbar button,.padbar a{
     flex:1;padding:16px 0;border:1px solid #060509;border-radius:9px;cursor:pointer;
     font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:#d8d2e8;
     background:linear-gradient(180deg,#2c2a36,#17161e);
     box-shadow:0 3px 0 #060509, inset 0 1px 1px rgba(255,255,255,.12);
     touch-action:none;user-select:none;-webkit-user-select:none;
   }
-  .padbar button:active{transform:translateY(2px)}
+  .padbar button:active,.padbar a:active{transform:translateY(2px)}
+  .padbar a{display:flex;align-items:center;justify-content:center;flex:.9;text-decoration:none}
+  #padF.hidden{display:block!important;opacity:.25;pointer-events:none}
+  .gamelinks{display:none;justify-content:center;gap:12px;margin-top:44px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.18em}
+  .gamelinks a{color:#b9aed4;text-decoration:none;border-bottom:1px solid rgba(185,174,212,.5);padding-bottom:2px}
+  .gamelinks span{color:#5a4f6b}
+  body.touch .gamelinks{display:flex}
   .padbar .jump{flex:1.4;color:var(--neon3)}
 
   /* ---------- gaming magazine ---------- */
@@ -256,6 +274,7 @@
   @media (max-width:1024px){
     .setrow{flex-direction:column;align-items:center}
     .mag{width:min(94vw,560px);max-height:340px}
+    body.touch .mag{display:none!important}
   }
   @media (max-width:760px){
     body{padding:10px 6px 20px}
@@ -274,14 +293,14 @@
   @media (prefers-reduced-motion:reduce){
     .overlayscr .start{animation:none}
   }
-  .readerdoc{max-width:640px;margin:90px auto 30px;padding:0 18px;
-    font-family:Georgia,"Times New Roman",serif;font-size:13px;line-height:1.75;color:rgba(190,183,165,.5)}
-  .readerdoc h1{font-size:16px;letter-spacing:.05em;margin-bottom:10px;color:rgba(200,192,172,.65);font-weight:600}
-  .readerdoc h2{font-size:11.5px;margin:18px 0 6px;letter-spacing:.14em;text-transform:uppercase;color:rgba(195,188,168,.6)}
-  .readerdoc p{margin:8px 0}
-  .readerdoc ul{padding-left:18px;margin:6px 0}
-  .readerdoc li{margin:3px 0}
-  .readerdoc a{color:rgba(205,196,172,.75)}
+  .readerdoc{max-width:640px;margin:40px auto 6px;padding:0 18px;
+    font-size:5px;line-height:1.15;color:transparent;user-select:none;-webkit-user-select:none;pointer-events:none}
+  .readerdoc h1{font-size:5px;margin:2px 0;color:transparent}
+  .readerdoc h2{font-size:5px;margin:2px 0;color:transparent}
+  .readerdoc p{margin:1px 0}
+  .readerdoc ul{padding-left:8px;margin:1px 0}
+  .readerdoc li{margin:1px 0}
+  .readerdoc a{color:transparent}
 </style>
 </head>
 <body>
@@ -341,11 +360,24 @@
       </div>
       <div class="factpanel"><div id="factcard">RUN RIGHT &middot; GRAB THE COLLECTIBLES &middot; REACH THE HIRE FLAG</div></div>
       <div class="padbar">
-        <button id="padL">&#9664;</button>
-        <button id="padR">&#9654;</button>
-        <button id="padJ" class="jump">JUMP</button>
+        <div class="pdpad">
+          <button id="padU">&#9650;</button>
+          <button id="padL">&#9664;</button>
+          <button id="padD">&#9660;</button>
+          <button id="padR">&#9654;</button>
+        </div>
         <button id="padX" class="hidden">EXIT</button>
-        <button id="padF" class="hidden">FIRE</button>
+        <div class="pbtns">
+          <button id="padF" class="hidden">FIRE</button>
+          <button id="padJ" class="jump">JUMP</button>
+        </div>
+      </div>
+      <div class="gamelinks">
+        <a href="/">HOME</a>
+        <span>&middot;</span>
+        <a href="https://github.com/JesseWebDotCom" target="_blank" rel="noopener">GITHUB</a>
+        <span>&middot;</span>
+        <a href="https://www.linkedin.com/in/jessemtorres/" target="_blank" rel="noopener">LINKEDIN</a>
       </div>
     </div>
   </div>
@@ -453,7 +485,7 @@ var ZONES=[
    t:"MCGOWAN CONSULTING GROUP",r:"Senior Systems Engineer &middot; 1999 to 2001",
    x:"Sikorsky Comanche program: security, imaging, and automation at scale."},
   {name:"WORLD 5 &middot; 2001 &middot; BRIDGEWATER ASSOCIATES",short:"2001 BRIDGEWATER",
-   t:"BRIDGEWATER ASSOCIATES",r:"Senior Core Platform Engineer &middot; Apr 2001 to Present",
+   t:"BRIDGEWATER ASSOCIATES",r:"Enterprise AI &amp; Platform Engineer &middot; Apr 2001 to Present",
    x:"Platform engineering, DevOps, automation architecture, and enterprise AI enablement."},
   {name:"WORLD 6 &middot; 2024 &middot; ENTERPRISE AI",short:"2024 ENTERPRISE AI",
    t:"THE CURRENT QUEST",r:"Enterprise AI &middot; 2024 to Present",
@@ -953,6 +985,7 @@ function bindPad(id,code){
   ["touchend","touchcancel","mouseup","mouseleave"].forEach(function(ev){el.addEventListener(ev,function(e){e.preventDefault();keys[code]=false})});
 }
 bindPad("padL","ArrowLeft");bindPad("padR","ArrowRight");bindPad("padJ","Space");bindPad("padX","ArrowDown");bindPad("padF","KeyX");
+bindPad("padU","ArrowUp");bindPad("padD","ArrowDown");
 var IS_TOUCH=("ontouchstart" in window)||(window.matchMedia&&matchMedia("(pointer: coarse)").matches);
 if(IS_TOUCH)document.body.classList.add("touch");
 var MOBILE=IS_TOUCH&&Math.min(screen.width,screen.height)<820;
@@ -3351,7 +3384,7 @@ requestAnimationFrame(loop);
 </script>
 
 <article class="readerdoc">
-  <h1>Jesse M. Torres, Senior Core Platform Engineer</h1>
+  <h1>Jesse M. Torres, Enterprise AI &amp; Platform Engineer</h1>
   <p><strong>You are reading the text version of Torres Quest.</strong> The real page is a playable side-scrolling arcade game through six eras of a real career. Exit reader view to press play, or read the same story in plain text below.</p>
   <h2>The game, chapter by chapter</h2>
   <ul>
@@ -3383,7 +3416,7 @@ requestAnimationFrame(loop);
   </ul>
   <h2>Experience</h2>
   <ul>
-    <li>Bridgewater Associates, Senior Core Platform Engineer, April 2001 to present. Platform engineering, DevOps, automation architecture, and enterprise AI enablement.</li>
+    <li>Bridgewater Associates, Enterprise AI &amp; Platform Engineer, April 2001 to present. Platform engineering, DevOps, automation architecture, and enterprise AI enablement.</li>
     <li>McGowan Consulting Group, Senior Systems Engineer, 1999 to 2001. Sikorsky Comanche program: security, imaging, and automation at scale.</li>
     <li>PricewaterhouseCoopers (Stamford, CT), Technical Specialist, 1998 to 1999. Multi-site support and executive support through the 1998 merger.</li>
     <li>Air National Guard, Senior Airman, August 1992 to August 1998. Computer maintenance and cryptography, with a Top Secret clearance.</li>
