@@ -1,6 +1,6 @@
 # jesseweb.com
 
-**[jesseweb.com](https://jesseweb.com)** is an interactive 1950s television set that broadcasts my resume. Turn on the WJMT-TV "Tele·Torres 4000", surf 22 channels of real vintage footage, and watch the newsprint TV Programs guide fill in my career as the shows air.
+**[jesseweb.com](https://jesseweb.com)** is one resume told by two machines. Pick the television: a 1950s WJMT-TV set that broadcasts 22 channels of real vintage footage while a newsprint TV guide fills in my career. Or pick the arcade: Torres Quest, a full side-scrolling platformer through six eras of my life, framed as a 90s VHS home video, with a helicopter flight, a company car, a wedding, a band, an underground tunnel, era-true music, and an AGI boss fight that ends in fireworks.
 
 ## How it works
 
@@ -13,8 +13,10 @@
 
 | Path | What it is |
 | :-- | :-- |
-| `site/index.html` | The entire application: markup, CSS, WebGL shaders, broadcast state machine |
-| `site/reel.mp4` | The broadcast reel: 107 segments, 23.9 minutes, 240x180 |
+| `site/index.html` | The front page: pick the television or the arcade |
+| `site/tv/index.html` | The television: markup, CSS, WebGL CRT shader, broadcast state machine |
+| `site/tv/reel.mp4` | The broadcast reel: 107 segments, 23.9 minutes, 240x180 |
+| `site/game/index.html` | Torres Quest: a complete canvas platformer in one file |
 
 ## Deploy
 
