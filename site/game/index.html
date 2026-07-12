@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="description" content="Torres Quest: a side-scrolling run through 30+ years of Jesse M. Torres in enterprise technology.">
 <meta property="og:title" content="Torres Quest &middot; Jesse Torres">
 <meta property="og:description" content="A 90s home-video side-scroller: run, jump, and collect a 30-year career.">
@@ -135,8 +135,33 @@
   .confetti{position:absolute;top:-14px;width:6px;height:10px;opacity:.95;pointer-events:none;animation:confall linear infinite}
   @keyframes confall{0%{transform:translateY(0) rotate(0deg)}100%{transform:translateY(560px) rotate(620deg)}}
 
-  /* touch controls */
-  .padbar{display:none;margin-top:12px;gap:10px}
+  html,body{overscroll-behavior:none}
+  *{-webkit-tap-highlight-color:transparent}
+  .screenbox{touch-action:none}
+
+  /* on-screen gamepad (touch devices) */
+  .tctl{position:absolute;bottom:10px;z-index:7;display:none;user-select:none;-webkit-user-select:none;touch-action:none}
+  body.touch .tctl{display:grid}
+  .tpad{left:10px;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px;gap:4px;
+    grid-template-areas:". up ." "lf dn rt"}
+  .tpad b:nth-child(1){grid-area:up}
+  .tpad b:nth-child(2){grid-area:lf}
+  .tpad b:nth-child(3){grid-area:dn}
+  .tpad b:nth-child(4){grid-area:rt}
+  .tbtns{right:10px;grid-template-columns:52px 60px;gap:10px;align-items:end}
+  .tctl b{
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(8,10,18,.42);border:1.5px solid rgba(255,255,255,.4);border-radius:12px;
+    color:rgba(255,255,255,.9);font-family:var(--mono);font-size:15px;font-weight:700;
+    height:44px;opacity:.85;touch-action:none;
+  }
+  .tbtns b{height:56px;border-radius:50%}
+  .tbtns #tA{border-color:rgba(255,210,61,.75);color:#ffd23d;font-size:17px}
+  .tbtns #tB{border-color:rgba(176,112,255,.75);color:#c9a6ff}
+  .tctl b.on{background:rgba(255,255,255,.28)}
+
+  /* legacy bar, kept for script hooks but never shown */
+  .padbar{display:none!important;margin-top:12px;gap:10px}
   .padbar button{
     flex:1;padding:16px 0;border:1px solid #060509;border-radius:9px;cursor:pointer;
     font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:#d8d2e8;
@@ -191,8 +216,7 @@
     .mag{width:min(94vw,560px);max-height:340px}
   }
   @media (max-width:760px){
-    body{padding:12px 8px 24px}
-    .padbar{display:flex}
+    body{padding:10px 6px 20px}
     .overlayscr{gap:7px;padding:8px}
     .overlayscr h1{font-size:15px}
     .overlayscr p{font-size:9px;line-height:1.6;letter-spacing:.08em;max-width:100%}
@@ -226,6 +250,12 @@
         <div class="zonetoast" id="zonetoast"></div>
         <button class="mutebtn hidden" id="mutebtn">SOUND ON</button>
         <div class="pausescr hidden" id="pausescr"><b>&#10074;&#10074; PAUSED</b></div>
+        <div class="tctl tpad">
+          <b id="tU">&#9650;</b><b id="tL">&#9664;</b><b id="tD">&#9660;</b><b id="tR">&#9654;</b>
+        </div>
+        <div class="tctl tbtns">
+          <b id="tB">B</b><b id="tA">A</b>
+        </div>
 
         <div class="overlayscr vhs" id="titlescr">
           <p class="tkick">A JESSEWEB HOME VIDEO PRODUCTION</p>
@@ -331,11 +361,11 @@ var DIFFNAMES=[
   ["SANDBOXED","PRODUCTION","UNGOVERNED"]
 ];
 var POPS=[
-  ["WAYNE'S WORLD","BATMAN RETURNS","T2 ON VHS NOW","CRYSTAL COLA","PLAY IT LOUD"],
-  ["JURASSIC PARK","FRIENDS THURSDAYS","TAMAGOTCHI CRAZE","56K FREE TRIAL","SPACE JAM"],
+  ["WAYNE'S WORLD","BATMAN RETURNS","TERMINATOR 2 ON VHS","CRYSTAL CLEAR COLA","GAME BOY: PLAY IT LOUD"],
+  ["JURASSIC PARK","FRIENDS THURSDAYS","TAMAGOTCHI CRAZE","56K INTERNET FREE TRIAL","SPACE JAM"],
   ["TITANIC","GOT MILK?","FURBY FRENZY","DOT-COM JOBS!","ARMAGEDDON"],
-  ["THE MATRIX","EPISODE ONE","MILLIONAIRE TONIGHT","MP3 IS HERE","POKEMON FEVER"],
-  ["SHREK","1000 SONGS IN POCKET","RING TONES 4U","TOP 8 FRIENDS","SCRANTON 9PM"],
+  ["THE MATRIX","STAR WARS EPISODE ONE","WHO WANTS TO BE A MILLIONAIRE","MP3 PLAYERS ARE HERE","POKEMON FEVER"],
+  ["SHREK","1000 SONGS IN YOUR POCKET","POLYPHONIC RINGTONES","MYSPACE TOP 8","THE OFFICE THURSDAYS"],
   ["AI EVERYWHERE","STREAM ALL OF IT","ELECTRIC TRUCKS","VR FOR ALL","ROBOT VACUUMS"]
 ];
 var popPick=POPS.map(function(p){return Math.floor(Math.random()*p.length)});
@@ -867,6 +897,22 @@ function bindPad(id,code){
   ["touchend","touchcancel","mouseup","mouseleave"].forEach(function(ev){el.addEventListener(ev,function(e){e.preventDefault();keys[code]=false})});
 }
 bindPad("padL","ArrowLeft");bindPad("padR","ArrowRight");bindPad("padJ","Space");bindPad("padX","ArrowDown");bindPad("padF","KeyX");
+var IS_TOUCH=("ontouchstart" in window)||(window.matchMedia&&matchMedia("(pointer: coarse)").matches);
+if(IS_TOUCH)document.body.classList.add("touch");
+var MOBILE=IS_TOUCH&&Math.min(screen.width,screen.height)<820;
+function bindT(id,code){
+  var el=document.getElementById(id);
+  function dn(e){e.preventDefault();keys[code]=true;el.classList.add("on")}
+  function up(e){if(e)e.preventDefault();keys[code]=false;el.classList.remove("on")}
+  el.addEventListener("touchstart",dn,{passive:false});
+  el.addEventListener("touchend",up,{passive:false});
+  el.addEventListener("touchcancel",up,{passive:false});
+  el.addEventListener("mousedown",dn);
+  el.addEventListener("mouseup",up);
+  el.addEventListener("mouseleave",function(){up()});
+}
+bindT("tL","ArrowLeft");bindT("tR","ArrowRight");bindT("tU","ArrowUp");bindT("tD","ArrowDown");
+bindT("tA","Space");bindT("tB","KeyX");
 
 document.getElementById("startbtn").addEventListener("click",start);
 function resetRun(){
@@ -2698,7 +2744,7 @@ function draw(){
   if(mri>0){
     var MCH="01<>#+*/=";
     cx.font="700 8px monospace";cx.textAlign="center";
-    var ncol=Math.floor(40*mri);
+    var ncol=Math.floor((MOBILE?22:40)*mri);
     for(var mc=0;mc<ncol;mc++){
       var colx=((mc*53)%480)+6;
       var mspd=1.4+((mc*29)%20)/10;
