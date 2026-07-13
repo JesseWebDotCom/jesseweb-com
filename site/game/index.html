@@ -1429,7 +1429,7 @@ function step(){
     boss.active=true;
     boss.sh=[0,1,2,3].map(function(i){return{a:i*Math.PI/2,alive:true}});
     boss.hp=[6,10,14][DIFF];boss.hpMax=boss.hp;
-    document.getElementById("osdDate").textContent="NOW";
+    document.getElementById("osdDate").textContent="THE FUTURE";
     dlgPick=Math.floor(Math.random()*BOSSLINES.length);
     bossDlgT=260;
     showToast("FINAL BOSS &middot; AGI");
@@ -2128,7 +2128,7 @@ function drawProps(i,B){
       cx.font="900 15px monospace";cx.textAlign="center";
       cx.shadowColor="rgba(255,40,40,.95)";cx.shadowBlur=14;
       cx.fillStyle="rgba(255,70,55,"+(.7+.3*sg)+")";
-      cx.fillText("AGI",o+x+w2/2,GROUND-h2+17);
+      cx.fillText("AI",o+x+w2/2,GROUND-h2+17);
       cx.shadowBlur=0;
     };
     mega(30,76,170);mega(840,82,184);
@@ -2257,12 +2257,12 @@ function drawProps(i,B){
       }
       cx.globalAlpha=1;
     }
-    var nsx=o+1360;                                                           /* the NOW sign */
+    var nsx=o+1360;                                                           /* the THE FUTURE sign */
     cx.fillStyle="#8a8a92";cx.fillRect(nsx+6,GROUND-38,4,38);
-    cx.fillStyle="#0c0c14";cx.fillRect(nsx-10,GROUND-52,36,17);
-    cx.strokeStyle="#e8e8f0";cx.lineWidth=1.5;cx.strokeRect(nsx-9,GROUND-51,34,15);
+    cx.fillStyle="#0c0c14";cx.fillRect(nsx-26,GROUND-54,68,19);
+    cx.strokeStyle="#e8e8f0";cx.lineWidth=1.5;cx.strokeRect(nsx-25,GROUND-53,66,17);
     cx.fillStyle="#fff";cx.font="bold 9px monospace";cx.textAlign="center";
-    cx.fillText("NOW",nsx+8,GROUND-40);
+    cx.fillText("THE FUTURE",nsx+8,GROUND-41);
     cx.fillStyle="#1e1c24";cx.fillRect(o+940,GROUND-16,44,16);               /* tank tread wreck */
     cx.strokeStyle="#3a3842";cx.lineWidth=2;
     for(var td=0;td<5;td++){cx.beginPath();cx.arc(o+948+td*8,GROUND-8,3,0,6.28);cx.stroke()}
