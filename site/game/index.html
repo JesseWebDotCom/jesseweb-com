@@ -880,6 +880,20 @@ function stepHeli(){
       for(var fb=0;fb<8;fb++)parts.push({x:strikeBird.x,y:strikeBird.y,vx:Math.cos(fb/8*6.28)*1.2,vy:Math.sin(fb/8*6.28)*1.2-.4,l:20});
     }
   }
+  /* failsafe: the Comanche must go down before it leaves World 1 airspace.
+     if the bird whiffs, or the pilot dodges it, or just stalls out, force an
+     engine failure so the heli always smokes, crashes, and ejects him inside
+     the military level. worst case: smoke and crash. */
+  if(heli.state==="fly"){
+    var birdWhiffed=strikeBird.on&&!strikeBird.hit&&strikeBird.x+8<heli.x;
+    if(heli.x>1460||heli.t>1100||birdWhiffed){
+      strikeBird.on=false;strikeBird.hit=false;
+      heli.state="warn";heli.warnT=80;
+      showToast("ENGINE FAILURE");
+      blip(140,.2,.06);setTimeout(function(){blip(880,.09,.05)},180);
+      for(var ef=0;ef<8;ef++)parts.push({x:heli.x+10,y:heli.y+6,vx:Math.cos(ef/8*6.28)*1.2,vy:Math.sin(ef/8*6.28)*1.2-.4,l:20});
+    }
+  }
   if(heli.state==="warn"&&heli.x>1480){heli.x=1480;if(heli.vx>0)heli.vx=0}
   if(heli.state==="warn"){
     if(heli.warnT%14===0)blip(880,.09,.05);
