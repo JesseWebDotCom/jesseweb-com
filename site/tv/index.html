@@ -748,9 +748,18 @@
   function setMuted(m){
     muted=m;
     if(actx&&master) master.gain.setTargetAtTime(m?0:1,actx.currentTime,0.02);
-    if(tube) tube.muted=m;
+    refreshAudio();
     var vk=document.getElementById("volknob");
     if(vk) vk.style.setProperty("--a",(m?-55:0)+"deg");
+  }
+  /* only a live video segment carries sound. iOS ignores video.volume, so the
+     mute state must ride on tube.muted or channels like CH 3 (color bars) leak
+     the reel's audio. */
+  function refreshAudio(){
+    if(!tube) return;
+    var on = !muted && !!SEGS[current] && !!liveSeg;
+    tube.muted = !on;
+    tube.volume = on ? vol : 0;
   }
   function hiss(on){
     if(!actx||!ngain) return;
@@ -771,8 +780,8 @@
     clearTimeout(tuneTimer); clearTimeout(introTimer);
     if(current!==n) prevCh=current;
     current=n; pendingAuto=!!viaAuto;
-    if(tube) tube.volume=0;
     liveSeg=null; bumping=false; screen.classList.remove("domchan");
+    refreshAudio();
     hideAll(); setNoise(true);
     showOSD("CH "+(n<10?"0"+n:n));
     tuneTimer=setTimeout(function(){
@@ -782,7 +791,7 @@
         if(el) el.classList.add("on");
         screen.classList.toggle("domchan", !SEGS[n]);
         if(SEGS[n]){ startBroadcast(n,pendingAuto); feedNext(); }
-        else { tube.volume=0; screen.classList.remove("bumping"); liveSeg=null; }
+        else { liveSeg=null; screen.classList.remove("bumping"); refreshAudio(); }
       }
       /* unknown channel: stay on static */
     }, reduced?120:420);
@@ -834,7 +843,7 @@
   }
   function seekTo(t){ try{ tube.currentTime=t; }catch(e){} }
   function startBroadcast(n,allowBump){
-    var seg=drawVariant(n); if(!seg){ tube.volume=0; return; }
+    var seg=drawVariant(n); if(!seg){ liveSeg=null; refreshAudio(); return; }
     liveSeg=seg;
     if(allowBump&&BUMPS.length&&Math.random()<0.35){
       var b=drawBump();
@@ -845,7 +854,7 @@
       bumping=false; screen.classList.remove("bumping");
       seekTo(seg[0]);
     }
-    tube.volume=vol;
+    refreshAudio();
   }
   setInterval(function(){
     if(!powered||!tube||tube.paused||tube.seeking) return;
@@ -1093,11 +1102,20 @@
   setInterval(function(){
     if(!castEl||!castCtx) return;
     if(!powered){ castEl.style.opacity=0; return; }
-    if(noiseOn||!tube||tube.paused){
-      castCtx.fillStyle="#8f97a8";
-      castCtx.fillRect(0,0,64,40);
-      castFade();
-      castEl.style.opacity=0.22;
+    var dom = !SEGS[current];   /* DOM channels don't play the <video>, so don't reflect it */
+    if(noiseOn||!tube||tube.paused||dom){
+      if(dom&&current===3&&!noiseOn){   /* CH 3 test card: mirror the SMPTE color bars */
+        var BARC=["#c0c0c0","#c0c000","#00c0c0","#00c000","#c000c0","#c00000","#0000c0"];
+        var bw=64/BARC.length;
+        for(var b=0;b<BARC.length;b++){ castCtx.fillStyle=BARC[b]; castCtx.fillRect(Math.floor(b*bw),0,Math.ceil(bw)+1,40); }
+        castFade();
+        castEl.style.opacity=0.4;
+      }else{
+        castCtx.fillStyle="#8f97a8";
+        castCtx.fillRect(0,0,64,40);
+        castFade();
+        castEl.style.opacity=(dom&&!noiseOn)?0.3:0.22;
+      }
       return;
     }
     try{
@@ -1199,8 +1217,8 @@
       case "flashbk": if(powered) tune(prevCh); break;
       case "guide": if(powered) tune(11); break;
       case "enter": clearTimeout(bufTimer); if(buf) commitBuf(); break;
-      case "volup": vol=Math.min(1,vol+0.15); if(tube&&SEGS[current]) tube.volume=vol; break;
-      case "voldn": vol=Math.max(0.1,vol-0.15); if(tube&&SEGS[current]) tube.volume=vol; break;
+      case "volup": vol=Math.min(1,vol+0.15); refreshAudio(); break;
+      case "voldn": vol=Math.max(0.1,vol-0.15); refreshAudio(); break;
     }
   });
   document.addEventListener("keydown",function(e){

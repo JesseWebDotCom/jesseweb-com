@@ -518,10 +518,19 @@ function unlockLvl(i){
 
 /* ============ audio: tiny square-wave blips ============ */
 var actx=null, muted=false;
+function ensureAudio(){
+  try{
+    if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    /* iOS: route through the media channel so the ring/silent switch never mutes us */
+    if(navigator.audioSession){try{navigator.audioSession.type="playback"}catch(e){}}
+    if(actx.state==="suspended") actx.resume();
+  }catch(e){}
+  return actx;
+}
 function blip(freq,dur,vol){
   if(muted) return;
   try{
-    if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    ensureAudio();
     var o=actx.createOscillator(), g=actx.createGain();
     o.type="square";o.frequency.value=freq;
     g.gain.setValueAtTime(vol||.03,actx.currentTime);
@@ -536,7 +545,7 @@ var mstep=0, mtimer=null, mhold=0;
 function victorySong(){
   if(muted)return;
   try{
-    if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
+    ensureAudio();
     var t=actx.currentTime+.06;
     mhold=t+3.2;
     [[392,.16],[523,.16],[659,.16],[784,.34],[659,.17],[784,.62]].forEach(function(n){
@@ -572,7 +581,7 @@ function tone(fr,t,d,type,vol){
 function startMusic(){
   if(mtimer)return;
   try{
-    if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
+    ensureAudio();
     var next=actx.currentTime+.08, SPB=.128;
     mtimer=setInterval(function(){
       if(muted||vPaused||actx.currentTime<mhold){if(next<actx.currentTime)next=actx.currentTime+.08;return;}
@@ -1079,7 +1088,10 @@ function setPaused(p){
   setOsd();
   if(p)pauseSnd();else resumeSnd();
 }
-document.addEventListener("pointerdown",function(){startMusic()},{once:true});
+/* iOS needs the AudioContext created + resumed inside a real user gesture */
+["pointerdown","touchstart","mousedown","keydown"].forEach(function(ev){
+  document.addEventListener(ev,function(){ensureAudio();startMusic()},{once:true,passive:true});
+});
 document.getElementById("vPause").addEventListener("click",function(){
   if(!running||ended)return;
   setPaused(!vPaused);
